@@ -3,12 +3,22 @@
 #include <thread>
 #include <WS2tcpip.h>
 
+#include "FileHandler.h"
 #include "Logger.h"
+
+void Pause()
+{
+	system("pause");
+}
 
 Server::Server()
 {
+	atexit(Pause);
+
 	Socket = INVALID_SOCKET;
 	RequiresCleanUp = false;
+
+	GlobalConfig = new Config();
 }
 
 Server::~Server()
