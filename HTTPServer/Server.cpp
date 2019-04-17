@@ -18,7 +18,7 @@ Server::Server()
 	Socket = INVALID_SOCKET;
 	RequiresCleanUp = false;
 
-	GlobalConfig = new Config();
+	ServerConfig = new Config();
 }
 
 Server::~Server()
@@ -135,7 +135,39 @@ void Server::AcceptClient(SOCKET ClientSocket)
 
 void Server::AcceptClientEx(SOCKET ClientSocket)
 {
-	char response[] = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 55\n\n<html><body><h1>This is your website!<h1></body></html>";
+	RespondToClient(ClientSocket);
+}
 
-	send(ClientSocket, response, strlen(response), 0);
+void Server::RespondToClient(SOCKET ClientSocket)
+{
+	Response *response = new Response();
+	FileHandler *fHandler = new FileHandler();
+	std::string fileName = ServerConfig->GetFilesFolder() + LANDING_PAGE;
+
+	if (!fHandler->OpenFile(fileName))
+	{
+		LOG_ALERT("Could not load landing page");
+
+		response->SetResponseType(RESPONSE_NOT_FOUND);
+		response->SetContentType(CONTENT_PLAIN);
+		response->SetData("hello");
+
+		SendResponse(response, ClientSocket);
+		return;
+	}
+
+	response->SetResponseType(RESPONSE_OK);
+	response->SetContentType(fileName);
+	response->SetData(fHandler->GetFileData());
+
+	SendResponse(response, ClientSocket);
+
+	fHandler->CloseFile();
+}
+
+void Server::SendResponse(Response *response, SOCKET ClientSocket)
+{
+	LOG("Sending response:");
+	LOG(response->GetResponseStr());
+	send(ClientSocket, response->GetResponseCStr(), strlen(response->GetResponseCStr()), 0);
 }

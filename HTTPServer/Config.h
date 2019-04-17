@@ -3,18 +3,14 @@
 #include <map>
 
 #define	CONFIG_FILE_PATH	"config/config.cfg"
-#define	CONFIG_ELEMENTS	1
 
-typedef std::map<int, std::string> ConfigObject;
+typedef std::map<std::string, int> ConfigObjectMap;
 
 enum ConfigEnum
 {
-	CONFIG_SERVER_FILES_FOLDER = 0
-};
+	CONFIG_SERVER_FILES_FOLDER = 0,
 
-ConfigObject ConfigStrings =
-{
-	{ CONFIG_SERVER_FILES_FOLDER, "serverfilesfolder" }
+	CONFIG_MAX
 };
 
 struct ConfigStructure
@@ -29,16 +25,16 @@ public:
 	Config();
 	~Config();
 
+	std::string GetFilesFolder() { return Configuration.ServerFilesFolder; }
+
 private:
 	void SetupConfigStrings();
 	void ReadConfig();
-	void ApplyConfig(int);
+	void ApplyConfig(int, std::string);
 
-	ConfigObject IsValidConfig(std::string);
+	void ApplyIfValid(std::string, std::string);
 
 	ConfigStructure Configuration;
 };
 
-
-
-extern Config *GlobalConfig;
+extern ConfigObjectMap ConfigMap;

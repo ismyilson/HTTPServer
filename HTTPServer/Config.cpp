@@ -5,7 +5,7 @@
 #include "Logger.h"
 #include "FileHandler.h"
 
-Config *GlobalConfig;
+ConfigObjectMap ConfigMap;
 
 Config::Config()
 {
@@ -15,11 +15,12 @@ Config::Config()
 
 Config::~Config()
 {
+
 }
 
 void Config::SetupConfigStrings()
 {
-	ConfigStrings.insert(std::pair<int, std::string>(0, "asd"));
+	ConfigMap["serverfilesfolder"] = CONFIG_SERVER_FILES_FOLDER;
 }
 
 void Config::ReadConfig()
@@ -31,35 +32,31 @@ void Config::ReadConfig()
 		exit(1);
 	}
 
-	std::string line, configName;
+	std::string line, configName, value;
 	while (fHandler->NextLine(line))
 	{
-		configName = line.substr(0, line.find('='));
+		size_t pos = line.find_first_of('=');
+		configName = line.substr(0, pos);
+		value = line.substr(pos + 1);
 
-		auto ConfigObj = IsValidConfig(configName);
-		if (ConfigObj.first != -1)
-		{
-			ApplyConfig(ConfigObj);
-		}
+		ApplyIfValid(configName, value);
 	}
+
+	fHandler->CloseFile();
 }
 
-ConfigObject Config::IsValidConfig(std::string configName)
+void Config::ApplyIfValid(std::string configName, std::string value)
 {
 	std::transform(configName.begin(), configName.end(), configName.begin(), tolower);
 
-	for (ConfigObject configObj : ConfigStrings)
-	{
-		if (strcmp(configObj.second.c_str(), configName.c_str()) == 0)
-		{
-			return configObj;
-		}
-	}
+	ConfigObjectMap::iterator it = ConfigMap.find(configName);
+	if (it == ConfigMap.end())
+		return;
 
-	return NULL;
+	ApplyConfig(it->second, value);
 }
 
-void Config::ApplyConfig(int ConfigNum)
+void Config::ApplyConfig(int ConfigNum, std::string value)
 {
 	switch (ConfigNum)
 	{
@@ -67,6 +64,8 @@ void Config::ApplyConfig(int ConfigNum)
 			break;
 
 		case CONFIG_SERVER_FILES_FOLDER:
+			LOG("Set value to " + value);
+			Configuration.ServerFilesFolder = value;
 			break;
 	}
 }

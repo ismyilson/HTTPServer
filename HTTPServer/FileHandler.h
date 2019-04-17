@@ -7,11 +7,15 @@ class FileHandler
 {
 public:
 	FileHandler();
-	FileHandler(std::string);
 	~FileHandler();
 
-	bool NextLine(std::string&);
 	bool OpenFile(std::string);
+	void CloseFile();
+
+	bool NextLine(std::string&);
+	std::string GetFileData();
+
+	long long int GetFileLength();
 
 private:
 	bool FileIsOk();
