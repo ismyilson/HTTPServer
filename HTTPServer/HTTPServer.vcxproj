@@ -120,6 +120,7 @@
     <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Packet.cpp" />
     <ClCompile Include="Response.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
@@ -128,6 +129,7 @@
     <ClInclude Include="ContentHandler.h" />
     <ClInclude Include="FileHandler.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="Packet.h" />
     <ClInclude Include="Response.h" />
     <ClInclude Include="Server.h" />
   </ItemGroup>

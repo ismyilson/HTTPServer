@@ -32,14 +32,14 @@ private:
 	// Starts listening for incoming connections on the main thread
 	void AcceptClients();
 
-	// Creates a thread for handling the accepted client
+	// Creates a thread for receiving data from client
 	void AcceptClient(SOCKET);
 
-	// Actually accepts the client
-	void AcceptClientEx(SOCKET);
+	// Constantly receives data from client
+	void ReceiveClientData(SOCKET);
 
 	// Builds the response
-	void RespondToClient(SOCKET);
+	void RespondToClient(SOCKET, std::string);
 
 	// Sends a response to the socket
 	void SendResponse(Response*, SOCKET);

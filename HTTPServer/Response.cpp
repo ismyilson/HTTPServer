@@ -2,11 +2,15 @@
 
 Response::Response()
 {
-	response = HTTP_VERSION;
 }
 
 Response::~Response()
 {
+}
+
+void Response::SetResponseHTTPVersion(std::string httpVersion)
+{
+	response = httpVersion;
 }
 
 void Response::SetResponseType(ResponseType rType)

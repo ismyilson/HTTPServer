@@ -4,8 +4,6 @@
 
 #include "ContentHandler.h"
 
-#define	HTTP_VERSION	"HTTP/1.1"
-
 enum ResponseType
 {
 	RESPONSE_OK,
@@ -20,6 +18,8 @@ public:
 
 	std::string GetResponseStr() { return response; }
 	const char* GetResponseCStr() { return response.c_str(); }
+
+	void SetResponseHTTPVersion(std::string);
 
 	void SetResponseType(ResponseType);
 

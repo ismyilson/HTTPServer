@@ -31,6 +31,9 @@
     <Filter Include="Archivos de origen\ContentHandler">
       <UniqueIdentifier>{8fe2a324-f984-4790-97e3-27039902a6e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Archivos de origen\Packet">
+      <UniqueIdentifier>{d7efdf03-c0f8-4786-b3cd-06492194e57c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,6 +57,9 @@
     <ClCompile Include="Logger.cpp">
       <Filter>Archivos de origen\Logger</Filter>
     </ClCompile>
+    <ClCompile Include="Packet.cpp">
+      <Filter>Archivos de origen\Packet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -73,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="Response.h">
       <Filter>Archivos de origen\Response</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Archivos de origen\Packet</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 
 #include "FileHandler.h"
 #include "Logger.h"
+#include "Packet.h"
 
 void Pause()
 {
@@ -96,7 +97,7 @@ void Server::InitSocket()
 	freeaddrinfo(addrResult);
 
 	if (listen(Socket, SOMAXCONN) == SOCKET_ERROR) {
-		printf("Listen failed with error: %ld\n" + WSAGetLastError());
+		LOG_ERROR("listen failed with error: " + WSAGetLastError());
 		closesocket(Socket);
 		WSACleanup();
 		exit(result);
@@ -129,28 +130,43 @@ void Server::AcceptClient(SOCKET ClientSocket)
 {
 	LOG("New client accepted");
 
-	std::thread thrd(&Server::AcceptClientEx, this, ClientSocket);
-	thrd.join();
+	std::thread recvThread(&Server::ReceiveClientData, this, ClientSocket);
+	recvThread.join();
 }
 
-void Server::AcceptClientEx(SOCKET ClientSocket)
+void Server::ReceiveClientData(SOCKET ClientSocket)
 {
-	RespondToClient(ClientSocket);
+	char buffer[1024];
+	int result = -1;
+
+	while (result != 0)
+	{
+		result = recv(ClientSocket, buffer, sizeof buffer, 0);
+		RespondToClient(ClientSocket, buffer);
+	}
 }
 
-void Server::RespondToClient(SOCKET ClientSocket)
+void Server::RespondToClient(SOCKET ClientSocket, std::string data)
 {
-	Response *response = new Response();
 	FileHandler *fHandler = new FileHandler();
-	std::string fileName = ServerConfig->GetFilesFolder() + LANDING_PAGE;
+	Packet *packet = new Packet(data);
+
+	Response *response = new Response();
+	response->SetResponseHTTPVersion(packet->HTTPVersion);
+
+	std::string fileName = packet->FileName;
+	if (strcmp(fileName.c_str(), "/") == 0)
+	{
+		fileName += LANDING_PAGE;
+	}
+
+	fileName.insert(0, ServerConfig->GetFilesFolder());
 
 	if (!fHandler->OpenFile(fileName))
 	{
-		LOG_ALERT("Could not load landing page");
-
 		response->SetResponseType(RESPONSE_NOT_FOUND);
 		response->SetContentType(CONTENT_PLAIN);
-		response->SetData("hello");
+		response->SetData("404 Not Found");
 
 		SendResponse(response, ClientSocket);
 		return;
@@ -167,7 +183,5 @@ void Server::RespondToClient(SOCKET ClientSocket)
 
 void Server::SendResponse(Response *response, SOCKET ClientSocket)
 {
-	LOG("Sending response:");
-	LOG(response->GetResponseStr());
 	send(ClientSocket, response->GetResponseCStr(), strlen(response->GetResponseCStr()), 0);
 }
