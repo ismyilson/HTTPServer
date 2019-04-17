@@ -21,6 +21,7 @@ Config::~Config()
 void Config::SetupConfigStrings()
 {
 	ConfigMap["serverfilesfolder"] = CONFIG_SERVER_FILES_FOLDER;
+	ConfigMap["serverport"] = CONFIG_SERVER_PORT;
 }
 
 void Config::ReadConfig()
@@ -64,8 +65,13 @@ void Config::ApplyConfig(int ConfigNum, std::string value)
 			break;
 
 		case CONFIG_SERVER_FILES_FOLDER:
-			LOG("Set value to " + value);
+			LOG("Set server files folder to " + value);
 			Configuration.ServerFilesFolder = value;
+			break;
+
+		case CONFIG_SERVER_PORT:
+			LOG("Set server port to " + value);
+			Configuration.ServerPort = value;
 			break;
 	}
 }

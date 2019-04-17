@@ -36,7 +36,7 @@ void Server::Start()
 
 	InitSocket();
 
-	AcceptClients();
+	CreateThreads();
 }
 
 void Server::InitSocket()
@@ -63,7 +63,7 @@ void Server::InitSocket()
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_flags = AI_PASSIVE;
 
-	result = getaddrinfo(NULL, "80", &hints, &addrResult);
+	result = getaddrinfo(NULL, ServerConfig->GetPort().c_str(), &hints, &addrResult);
 	if (result != 0)
 	{
 		LOG_ERROR("getaddrinfo failed, error code: " + result);
@@ -112,6 +112,15 @@ void Server::CleanUp()
 	WSACleanup();
 }
 
+void Server::CreateThreads()
+{
+	std::thread *t1 = new std::thread(&Server::AcceptClients, this);
+	std::thread *t2 = new std::thread(&Server::CheckIfDataReceived, this);
+
+	t1->join();
+	t2->join();
+}
+
 void Server::AcceptClients()
 {
 	LOG("Accepting clients");
@@ -128,22 +137,71 @@ void Server::AcceptClients()
 
 void Server::AcceptClient(SOCKET ClientSocket)
 {
-	LOG("New client accepted");
-
-	std::thread recvThread(&Server::ReceiveClientData, this, ClientSocket);
-	recvThread.join();
+	auto it = std::find(Clients.begin(), Clients.end(), ClientSocket);
+	if (it == Clients.end())
+	{
+		Clients.push_back(ClientSocket);
+		LOG("New client accepted");
+	}
 }
 
-void Server::ReceiveClientData(SOCKET ClientSocket)
+void Server::CheckIfDataReceived()
 {
-	char buffer[1024];
-	int result = -1;
+	LOG("Waiting for data");
 
-	while (result != 0)
+	int status;
+	fd_set readSet;
+	timeval *timeInterval = new timeval();
+	timeInterval->tv_sec = 0;
+	timeInterval->tv_usec = 30;
+
+	while (true)
 	{
-		result = recv(ClientSocket, buffer, sizeof buffer, 0);
-		RespondToClient(ClientSocket, buffer);
+		for (size_t i = 0; i < Clients.size(); ++i)
+		{
+			FD_ZERO(&readSet);
+			FD_SET(Clients[i], &readSet);
+
+			status = select(Clients[i] + 1, &readSet, NULL, NULL, timeInterval);
+
+			if (status == SOCKET_ERROR)
+			{
+				RemoveSocket(Clients[i]);
+				i--;
+				continue;
+			}
+
+			if (status == 0)
+			{
+				// No data to receive from this socket
+				continue;
+			}
+
+			if (!ReceiveClientData(Clients[i]))
+			{
+				i--;
+			}
+		}
 	}
+}
+
+bool Server::ReceiveClientData(SOCKET ClientSocket)
+{
+	LOG("Data Received");
+	
+	char buffer[1024];
+	int result;
+	
+	result = recv(ClientSocket, buffer, sizeof buffer, 0);
+
+	if (result == 0)
+	{
+		RemoveSocket(ClientSocket);
+		return false;
+	}
+
+	RespondToClient(ClientSocket, buffer);
+	return true;
 }
 
 void Server::RespondToClient(SOCKET ClientSocket, std::string data)
@@ -183,5 +241,20 @@ void Server::RespondToClient(SOCKET ClientSocket, std::string data)
 
 void Server::SendResponse(Response *response, SOCKET ClientSocket)
 {
+	LOG("Response sent");
 	send(ClientSocket, response->GetResponseCStr(), strlen(response->GetResponseCStr()), 0);
+}
+
+void Server::RemoveSocket(SOCKET ClientSocket)
+{
+	auto it = std::find(Clients.begin(), Clients.end(), ClientSocket);
+	if (it == Clients.end()) // Should never happen?
+	{
+		return;
+	}
+
+	int pos = std::distance(Clients.begin(), it);
+
+	closesocket(Clients[pos]);
+	Clients.erase(Clients.begin() + pos);
 }
