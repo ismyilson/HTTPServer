@@ -13,48 +13,66 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Archivos de origen\Config">
+      <UniqueIdentifier>{75774e14-ee36-4838-ac06-fd6b6583ef9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Response">
+      <UniqueIdentifier>{f4c2af2f-509a-4a18-9c5c-eb7637522928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\FileHandler">
+      <UniqueIdentifier>{aaaac33e-9bea-4e70-8151-a667339dfa83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Server">
+      <UniqueIdentifier>{506a8d82-11cb-4bf1-bf05-167771b6f382}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Logger">
+      <UniqueIdentifier>{d8cfbb40-3daf-4f20-ae9a-ecfd3dccc040}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\ContentHandler">
+      <UniqueIdentifier>{8fe2a324-f984-4790-97e3-27039902a6e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="FileHandler.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Config.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Archivos de origen\Config</Filter>
     </ClCompile>
     <ClCompile Include="ContentHandler.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Archivos de origen\ContentHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="FileHandler.cpp">
+      <Filter>Archivos de origen\FileHandler</Filter>
     </ClCompile>
     <ClCompile Include="Response.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Archivos de origen\Response</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Archivos de origen\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Archivos de origen\Logger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Server.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="FileHandler.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de origen\Config</Filter>
     </ClInclude>
     <ClInclude Include="ContentHandler.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de origen\ContentHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Archivos de origen\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="FileHandler.h">
+      <Filter>Archivos de origen\FileHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>Archivos de origen\Server</Filter>
     </ClInclude>
     <ClInclude Include="Response.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Archivos de origen\Response</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
